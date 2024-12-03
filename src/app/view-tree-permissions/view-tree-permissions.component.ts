@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { tokenInfo, JwtService } from 'security-lib';
-import { AuthService } from '../+shared/services/auth/auth.service';
+import { JwtDecodeService, AuthService, StorageService } from 'security-lib';
+import { tokenInfo } from 'security-lib/lib/security-lib/models/tokenModels';
+
 
 @Component({
   selector: 'app-view-tree-permissions',
@@ -15,12 +16,12 @@ export class ViewTreePermissionsComponent implements OnInit {
   formattedTokenData: tokenInfo | null = null;
   flagsString: string = "";
 
-  constructor(private jwtService: JwtService, private authService:AuthService) { }
+  constructor(private jwtService: JwtDecodeService, private authService: AuthService, private storageService: StorageService) { }
 
   ngOnInit(): void {
 
-    if(localStorage.getItem('token')) {
-      this.token = localStorage.getItem('token')!;
+    if (this.storageService.getLocalStorage('token')) {
+      this.token = this.storageService.getLocalStorage('token')!;
     }
   }
 
@@ -39,8 +40,15 @@ export class ViewTreePermissionsComponent implements OnInit {
   setTokenAsPermissionTree() {
     console.log('Se establece un nuevo token y permissionsTree en el localStorage');
 
-    localStorage.setItem('token', this.token);
-    localStorage.setItem('permissionsTree', JSON.stringify(this.formattedTokenData?.permissionsTree));
-    this.authService.setPermissionsFromlocalStorage();
+    this.storageService.setLocalStorage('token', this.token);
+
+    if (this.formattedTokenData?.permissionsTree) {
+      this.authService.savePermissionsTree(this.formattedTokenData?.permissionsTree);
+      return;
+    }
+
+    console.error('ocurrió un error asignando los permisos');
+
+
   }
 }
