@@ -1,0 +1,23 @@
+<div class="container">
+  <div class="input-section">
+    <h2>Token Input</h2>
+    <textarea [(ngModel)]="token" placeholder="Enter your token here"></textarea>
+    <button (click)="decodeToken()">Enviar</button>
+  </div>
+
+  <div class="output-section" *ngIf="formattedTokenData">
+    <h2>Token Data</h2>
+    <div>
+      <strong>Permissions:</strong>
+      <p> {{formattedTokenData.permissionsTree | json}}
+    </div>
+    <div>
+      <strong>Expiration:</strong> {{formattedTokenData.expiration}}
+    </div>
+  </div>
+
+  <div class="input-section">
+    <h2>Otorgar Permisos Auth</h2>
+    <button (click)="setTokenAsPermissionTree()">EstablecerPermisos</button>
+  </div>
+</div>
